@@ -5,7 +5,6 @@
 # @details [description]
 # @resources https://docs.python.org/2/howto/argparse.html
 
-
 from random import randint, choice
 from file_manager import FileManager
 import argparse
