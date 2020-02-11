@@ -8,8 +8,8 @@
 import time  
 
 localtime = time.asctime(time.localtime(time.time()))
-email = "luizgustavo.wakano@edu.sait.ca" 
-first = "Luiz"
+email = "myemail@domain.ca" 
+first = "NameHere"
 last = "Who"
 
 print("{} {} {} {}".format(localtime, email, first, last))
