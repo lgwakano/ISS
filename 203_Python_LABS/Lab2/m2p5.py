@@ -73,7 +73,7 @@ def read(buf):
     offset = 0
     while offset < len(buf):
         #STRUCT.unpack: the buffer until reaches the STRUCT size defined it it's constructor
-        #map: for each iterable make it call convert_string to validate the string
+        #map: for each iterable make it call to convert_string to validate the string
         #Utmp._make: transform the iterable into the namedtuple
         #.append: Add the namedtuple to a list for be printed later
         utmp_lst.append(Utmp._make(map(convert_string, STRUCT.unpack_from(buf, offset))))
