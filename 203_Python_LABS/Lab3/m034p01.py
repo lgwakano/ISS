@@ -8,6 +8,7 @@
 # https://codereview.stackexchange.com/questions/67904/calculate-cpu-by-process-from-proc-stat-and-proc-pid-stat
 # https://stackoverflow.com/questions/19103052/python-string-formatting-columns-in-line#19103221
 # https://www.tutorialspoint.com/python/list_max.htm
+# https://docs.python.org/3.4/library/collections.html
 
 fav_properties = [
     'comm',
@@ -32,6 +33,7 @@ import sys
 from collections import namedtuple
 from helper import Helper
 
+#namedtuple is a regular class which makes inheritance at ease
 class ProcessStat(namedtuple('processStat', 'pid comm state ppid pgrp session tty_nr tpgid flags' +
                          ' minflt cminflt majflt cmajflt utime stime cutime cstime priority' + 
                          ' nice num_threads itrealvalue starttime vsize rss rsslim startcode' + 
