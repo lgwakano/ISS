@@ -3,16 +3,24 @@
 # @course ITSC203
 # @create date 2020-01-20 12:30:29
 # @details [Linux Process]
-# @resources
+# @resources: http://man7.org/linux/man-pages/man5/proc.5.html
 
 import os
-
-import pprint
-import subprocess
-#from file_manager import FileManager
+import sys
 from collections import namedtuple
+from helper import Helper
 
-# class ProcessStat(namedtuple('processStat', ''))
+class ProcessStat(namedtuple('processStat', 'pid comm state ppid pgrp session tty_nr tpgid flags' +
+                         ' minflt cminflt majflt cmajflt utime stime cutime cstime priority' + 
+                         ' nice num_threads itrealvalue starttime vsize rss rsslim startcode' + 
+                         ' endcode startstack kstkesp kstkeip signal blocked sigignore sigcatch' + 
+                         ' wchan nswap cnswap exit_signal processor rt_priority policy' + 
+                         ' delayacct_blkio_ticks guest_time cguest_time start_data end_data' + 
+                         ' start_brk arg_start arg_end env_start env_end exit_code')):
+
+    def __init__():
+        pass
+
 
 class LinuxProcess(namedtuple('linuxProcess', 'user pid cpu mem vsz rss tty stat start time command')):
     
@@ -20,43 +28,54 @@ class LinuxProcess(namedtuple('linuxProcess', 'user pid cpu mem vsz rss tty stat
         pass
 
 
-def get_processes():
-    """
-    Parse the output of `ps aux` into a list of dictionaries representing the parsed 
-    process information from each row of the output. Keys are mapped to column names,
-    parsed from the first line of the process' output.
-    :rtype: list[dict]
-    :returns: List of dictionaries, each representing a parsed row from the command output
-    """
-    output = subprocess.Popen(['ps', 'aux'], stdout=subprocess.PIPE).stdout.readlines()        
-    headers = [h for h in ' '.join(map(convert_string, output[0].strip().split())).split() if h]    
-    raw_data = map(lambda s: convert_string(s).strip().split(None, len(headers) - 1), output[1:])
-    print(f"headers: {headers}")
-    
-    return list(raw_data)
-    #return [dict(zip(headers, r)) for r in raw_data]
+    def get_proc_stat(self):
+        try:
+            pid_path = os.path.join('/proc', str(self.pid), 'stat')
+            with open(pid_path, 'r') as pidfile:
+                procStat = pidfile.readline()
+
+                return ProcessStat._make(map(Helper.convert_string, procStat.strip().split())) 
+        except IOError as e:
+            print('ERROR: %s' % e)
+            sys.exit(2)
+
+    def get_command_line(self):
+        return Helper.linux_command("cat /proc/" + self.pid + "/cmdline")
 
 
-def linux_command(command="ps aux"):
-    f = os.popen(command)
-    command_output = f.read()
-    return command_output
+def calc_or_tx_process():
+    #start process like calculator or lxterminal
+    proc = None
+    try:
+        proc = Helper.start_process("gnome-calculator")
+    except:
+        proc = Helper.start_process("lxterminal")
+
+    return proc
 
 
-def convert_string(val):
-    if isinstance(val, bytes): #only check byte type
-        return val.rstrip(b'\0').decode() #rstrip is trimming the null characters \0 before decoding byte string 
-    return val
+def main():
+    #current process pid
+    current_pid = os.getpid()
 
-
-if __name__ == '__main__':
-    #linuxProcess = LinuxProcess()
-    process = get_processes()
-    
+    #get list of process running
+    process = Helper.get_processes()
     lstLinuxProcess = []
     for p in process:
         lstLinuxProcess.append(LinuxProcess._make(p))
 
-    
-    
+    #grab the process by id
+    first_or_default = next((x for x in lstLinuxProcess if x.pid == str(current_pid)), None)
+    print(first_or_default)
 
+    proc_stat = first_or_default.get_proc_stat()
+    print(proc_stat.ppid)
+    print(proc_stat.comm)
+    print(proc_stat)
+
+    cmdline = first_or_default.get_command_line()
+    print(cmdline)
+
+
+if __name__ == '__main__':
+    main()
