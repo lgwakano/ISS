@@ -4,6 +4,10 @@
 # @create date 2020-01-20 12:30:29
 # @details [Linux Process]
 # @resources: http://man7.org/linux/man-pages/man5/proc.5.html
+# http://www.greenteapress.com/thinkpython/thinkCSpy.pdf
+# https://codereview.stackexchange.com/questions/67904/calculate-cpu-by-process-from-proc-stat-and-proc-pid-stat
+# https://stackoverflow.com/questions/19103052/python-string-formatting-columns-in-line#19103221
+# https://www.tutorialspoint.com/python/list_max.htm
 
 fav_properties = [
     'comm',
@@ -109,6 +113,7 @@ def main():
     proc_stat = proc.get_proc_stat() #parsed into class proc_stat
     
     print_proc_stat(proc_stat)
+    print(current_pid)
 
 
 if __name__ == '__main__':
